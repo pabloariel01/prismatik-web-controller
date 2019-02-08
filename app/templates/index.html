@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>Web Control</title>
+
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/layout.css') }}">
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/jquery.nouislider.css') }}">
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/spectrum.css') }}">
+
+<script  type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.10.2.min.js') }}"></script>
+<script  type="text/javascript" src="{{ url_for('static', filename='js/jquery.nouislider.min.js') }}"></script>
+<script  type="text/javascript" src="{{ url_for('static', filename='js/spectrum.js') }}"></script>
+<script  type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
+	
+
+</head>
+<body>
+
+	<div id="loading"></div>
+
+	<div class="main-section">
+
+		<div id="header">
+			<button type="button" class="btn-status blue fl-right space-2" value="on" data-lang="turn-on"></button>
+			<button type="button" class="btn-status red fl-right space-2" value="off" data-lang="turn-off"></button>
+			<div class="logo"></div>
+			<h1>AmbiBox Web Control</h1>
+		</div>
+
+		<div>
+
+			<div class="section">
+				<h3 data-lang="profile-selection"></h3>
+				<select id="profile" class="width-100p send data-imp">
+				</select>
+			</div>
+
+			<div class="section">
+				<h3 data-lang="mode"></h3>
+				<select id="mode" class="width-100p send">
+					<option data-lang="screen-capture" value="display"></option>
+					<option data-lang="static" value="static"></option>
+					<option data-lang="dynamic" value="dynamic"></option>
+					<option data-lang="color-music" value="music"></option>
+					<option data-lang="plugins" value="plugin"></option>
+				</select>
+			</div>
+
+			<div class="section tab-display">
+				<h3 data-lang="screen-capture-method"></h3>
+				<select id="display" class="width-100p send">
+					<option value="0">DirectDraw no Aero</option>
+					<option value="1">DirectDraw SRAM no Aero</option>
+					<option value="2">DirectDraw VRAM no Aero</option>
+					<option value="3">GDI ZS no Aero</option>
+					<option value="4">GDI FS no Aero</option>
+					<option value="5">GDI FS Aero</option>
+					<option value="6">PlayClaw</option>
+					<option value="7">Windows 8</option>
+					<option value="8">XBMC Direct</option>
+				</select>
+			</div>
+
+			<div class="section tab-static">
+				<h3 data-lang="backlight-color"></h3>
+				<div id="color"></div>
+			</div>
+
+			<div class="section tab-dynamic">
+				<h3 data-lang="rate-change-color"></h3>
+				<div id="dynamic" class="slider"></div>
+			</div>
+			
+			<div class="section tab-music">
+				<h3 data-lang="color-music-mode"></h3>
+				<select id="music" class="width-100p send">
+					<option value="0" data-lang="color-music-mode-1"></option>
+					<option value="1" data-lang="color-music-mode-2"></option>
+					<option value="2" data-lang="color-music-mode-3"></option>
+				</select>
+			</div>
+
+			<div class="section tab-plugin">
+				<h3 data-lang="plugins"></h3>
+				<select id="plugin" class="width-100p send">
+				</select>
+			</div>
+
+		</div>
+
+		<div class="footer-fix"></div>
+	</div>
+
+	<div id="footer">
+		WebUI: <a href="http://pageto.me" target="_blank"><strong>Page</strong>to.me</a>
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,194 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+	font: inherit;
+	font-size: 100%;
+}
+
+@font-face {
+	font-family: 'Open Sans';
+	src: url('../font/OpenSans-Regular.eot?') format('eot'),
+		 url('../font/OpenSans-Regular.woff') format('woff'),
+		 url('../font/OpenSans-Regular.ttf') format('truetype'),
+		 url('../font/OpenSans-Regular.svg#OpenSans') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+html, body {
+	font: 12px/14px 'Open Sans', Arial, Helvetica;
+	color: #323232;
+	background: white;
+	background: #f5f5f5;
+	height: 100%;
+}
+
+a {
+	color: #ff9600;
+	text-decoration: none;
+	-webkit-transition: color 0.3s;
+	   -moz-transition: color 0.3s;
+		-ms-transition: color 0.3s;
+		 -o-transition: color 0.3s;
+			transition: color 0.3s;
+}
+a:hover {color: #82c0dd;}
+
+p {margin-bottom: 5px;}
+strong {font-weight: bold;}
+small {font-size: 10px;}
+big {font-size: 18px;}
+
+ul {list-style-type: none;}
+table {border: 0; border-collapse: collapse;}
+table td {padding: 0;}
+
+.space-1 {margin-top: 5px;}
+.space-2 {margin-top: 10px;}
+.fl-left {float: left;}
+.fl-right {float: right;}
+.width-100p {width: 100%;}
+.text-left {text-align: left !important;}
+.text-right {text-align: right !important;}
+.text-center {text-align: center !important;}
+
+#header {
+	height: 50px;
+	background: #333;
+	padding: 0 5%;
+	line-height: 50px;
+	}
+	#header h1 {
+		display: table-cell;
+		height: 50px;
+		color: white;
+		vertical-align: middle;
+		font-weight: 300;
+		font-size: 16px;
+		line-height: 14px;
+	}
+
+.logo {
+	background: url('../image/ambibox.png') left center no-repeat;
+	width: 36px;
+	height: 50px;
+	float: left;
+}
+
+.main-section {min-height: 100%;}
+.footer-fix {height: 30px;}
+.section {
+	margin: 10px 0;
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 15px;
+	padding: 0 5% 12px;
+}
+.section h3 {
+	font-weight: bold;
+	margin-bottom: 2px;
+}
+
+#loading {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 999;
+	width: 100%;
+	height: 100%;
+	background: #f1c40f url('../image/loading.gif') center no-repeat;
+}
+
+/* form element */
+.input {
+	margin: 0;
+	background: white;
+	border: 1px solid #ccc;
+	height: 30px;
+	padding: 0 10px;
+	border-radius: 3px;
+	font: 12px/14px 'Open Sans', Arial, Helvetica;
+	color: #323232;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+			box-sizing: border-box;
+	}
+	.input:focus {
+		outline: none;
+	}
+	textarea.input {
+		min-width: 100px;
+		max-width: 100%;
+		height: auto;
+	}
+
+
+button {
+	padding: 0 10px;
+	height: 30px;
+	border: 0;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	color: white;
+	font: bold 14px/30px 'Open Sans', Arial, Helvetica;
+	cursor: pointer;
+	-webkit-transition: background 0.3s;
+	   -moz-transition: background 0.3s;
+		-ms-transition: background 0.3s;
+		 -o-transition: background 0.3s;
+			transition: background 0.3s;
+	}
+	button:focus {
+		outline: none;
+	}
+	button.blue {
+		background: #4396fc;
+		border-color: #1461C0;		
+		}
+		button.blue:hover {
+			background: #65a9fd;
+		}
+	button.red {
+		background: #e06e6e;
+		border-color: #9e3737;
+		}
+		button.red:hover {
+			background: #f28888;
+		}
+
+select {
+	height: 30px;
+	font: 12px 'Open Sans', Arial, Helvetica;
+	background: #4396FC;
+	border: 0;
+	border-radius: 1px;
+	color: white;
+	padding: 0 5px;
+	cursor: pointer;
+	}
+	select:focus {
+		outline: 0;
+	}
+
+#footer {
+	height: 30px;
+	margin-top: -30px;
+	line-height: 30px;
+	background: #333;
+	text-align: right;
+	color: white;
+	padding: 0 15px;
+}
