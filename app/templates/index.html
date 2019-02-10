@@ -26,7 +26,7 @@
 			<button type="button" class="btn-status blue fl-right space-2" value="on" data-lang="turn-on"></button>
 			<button type="button" class="btn-status red fl-right space-2" value="off" data-lang="turn-off"></button>
 			<div class="logo"></div>
-			<h1>AmbiBox Web Control</h1>
+			<h1> Web Control</h1>
 		</div>
 
 		<div>
@@ -40,14 +40,22 @@
 			<div class="section">
 				<h3 data-lang="mode"></h3>
 				<select id="mode" class="width-100p send">
-					<option data-lang="screen-capture" value="display"></option>
-					<option data-lang="static" value="static"></option>
-					<option data-lang="dynamic" value="dynamic"></option>
-					<option data-lang="color-music" value="music"></option>
-					<option data-lang="plugins" value="plugin"></option>
+					<option data-lang="screen-capture" value="ambilight"></option>
+					<option data-lang="static" value="moodlamp-static"></option>
+					<option data-lang="dynamic" value="moodlamp-dynamic"></option>
+					<option data-lang="color-music" value="soundviz"></option>
+					<!--<option data-lang="plugins" value="plugin"></option>-->
 				</select>
 			</div>
 
+<!--  
+               "setmode:ambilight"
+                 "setmode:moodlamp"
+                 "setmode:soundviz"
+
+-->
+
+<!--
 			<div class="section tab-display">
 				<h3 data-lang="screen-capture-method"></h3>
 				<select id="display" class="width-100p send">
@@ -62,6 +70,7 @@
 					<option value="8">XBMC Direct</option>
 				</select>
 			</div>
+-->
 
 			<div class="section tab-static">
 				<h3 data-lang="backlight-color"></h3>
@@ -72,7 +81,12 @@
 				<h3 data-lang="rate-change-color"></h3>
 				<div id="dynamic" class="slider"></div>
 			</div>
-			
+
+			<div class="section brightness">
+				<h3 data-lang="brightness"></h3>
+				<div id="brightness" class="slider2"></div>
+			</div>
+<!--			
 			<div class="section tab-music">
 				<h3 data-lang="color-music-mode"></h3>
 				<select id="music" class="width-100p send">
@@ -87,7 +101,7 @@
 				<select id="plugin" class="width-100p send">
 				</select>
 			</div>
-
+-->
 		</div>
 
 		<div class="footer-fix"></div>
