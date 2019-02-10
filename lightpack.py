@@ -6,6 +6,9 @@ class lightpack:
 	# port = 3636              # The same port as used by the server
 	# apikey = '{c2ef0ccd-dd8a-4e25-8ab3-8d17ce25b20c}'		  # Secure API key which generates by Lightpack software on Dev tab
 	# ledMap = [1,2,3,4,5,6,7,8,9,10] 	#mapped LEDs
+
+ 
+
 	
 	def __init__(self, _host, _port, _ledMap = None, _apikey = None):
 		self.host = _host
@@ -32,6 +35,12 @@ class lightpack:
 		
 	def getStatus(self):
 		self.connection.send(b"getstatus\n")
+		status = self.__readResult()
+		status = status.split(':')[1]
+		return status
+
+	def getBrightness(self):
+		self.connection.send(b"getbrightness\n")
 		status = self.__readResult()
 		status = status.split(':')[1]
 		return status
