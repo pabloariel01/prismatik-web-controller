@@ -1,7 +1,7 @@
 Website for controlling Prismatik in Lightpack projects
 ---------
 
-*Python Rust backend that comunicates with  * [psieg Prismatiks](https://github.com/psieg/Lightpack/releases) telnet api (Version 5.11.2.19)*
+*Python Flask backend that comunicates with  [psieg Prismatiks](https://github.com/psieg/Lightpack/releases) telnet api (Version 5.11.2.19)*
 
 
 **Lightpack** is a fully open-source and simple hardware implementation of the backlight for any computer. It's a USB content-driven ambient lighting system.
@@ -14,3 +14,11 @@ handle other devices with Prismatik such as Adalight, Ardulight, or even Alienwa
 * Fully open-source under GPLv3
 * Attemps to reconnect when socket dies
 * Web interface for changing profiles, modes, smooth and brigthness
+
+
+#### Build instructions(still in progress):
+Clone proyect
+Create a virtual environment(optional)
+Install Flask  
+Run proyect (flask run)
+
