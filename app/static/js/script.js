@@ -1,58 +1,69 @@
-$(window).load(function() {
+$(window).load(function () {
 	$('#loading').fadeOut(500);
 });
 
-const 	language=	{
-	"turn-on":	"Turn On",
-	"turn-off":	"Turn Off",
-	"screen-capture":	"Screen capture",
-	"static":	"Static background",
-	"dynamic":	"Dynamic background",
-	"color-music":	"Color music",
-	"profile-selection":	"Selecting a profile",
-	"mode":	"Mode",
-	"screen-capture-method":	"The method of screen capture",
-	"backlight-color":	"Background color",
-	"rate-change-color":	"Speed of color change",
-	"brightness": "Brillo"
+const language = {
+	"turn-on": "Turn On",
+	"turn-off": "Turn Off",
+	"screen-capture": "Screen capture",
+	"static": "Static background",
+	"dynamic": "Dynamic background",
+	"color-music": "Color music",
+	"profile-selection": "Selecting a profile",
+	"mode": "Mode",
+	"screen-capture-method": "The method of screen capture",
+	"backlight-color": "Background color",
+	"rate-change-color": "Speed of color change",
+	"brightness": "Brillo",
+	"smooth": "smooth"
 }
 
-jQuery(function($) {
+jQuery(function ($) {
 
-	var profile 	= $('#profile'),
-		mode 		= $('#mode'),
-		btnStatus 	= $('.btn-status');
+	var profile = $('#profile'),
+		mode = $('#mode'),
+		btnStatus = $('.btn-status');
 
 	var defValue = new Object();
 
 	$('#color').spectrum({
 		flat: true,
 		showButtons: false,
-		move: function(color) {
-			sendData('static='+color.toHexString());
+		move: function (color) {
+			sendData('static=' + color.toHexString());
 			console.log(color.toRgb())
 		}
 	});
 
-	$('.slider2').noUiSlider({
-		range: [0,100],
+	$('.brightness-slider').noUiSlider({
+		range: [0, 100],
 		start: 20,
 		handles: 1,
 		connect: 'lower',
-		set: function() {
+		set: function () {
 			var value = Math.round(this.val());
-			sendData('setbrightness:'+value);
+			sendData('setbrightness:' + value);
 		}
 	});
 
-	$('.slider').noUiSlider({
-		range: [15,255],
+	$('.dynamic-slider').noUiSlider({
+		range: [0, 255],
 		start: 20,
 		handles: 1,
 		connect: 'lower',
-		set: function() {
+		set: function () {
 			var value = Math.round(this.val());
-			sendData('dynamic='+value);
+			sendData('dynamic=' + value);
+		}
+	});
+	$('.smooth-slider').noUiSlider({
+		range: [0, 255],
+		start: 20,
+		handles: 1,
+		connect: 'lower',
+		set: function () {
+			var value = Math.round(this.val());
+			sendData('dynamic=' + value);
 		}
 	});
 
@@ -62,14 +73,14 @@ jQuery(function($) {
 			dataType: 'json',
 			url: '/info',
 			// data: 'action=onload',
-			success: function(data) {
+			success: function (data) {
 				console.log(data);
-				
+
 				//profile
 				const profs = data.info.profiles
 				for (var i in profs) {
-					profile.append('<option data-imp="'+i+'" value="'+profs[i]+'">'+profs[i]+'</option>');
-					
+					profile.append('<option data-imp="' + i + '" value="' + profs[i] + '">' + profs[i] + '</option>');
+
 					// defValue[i] = new Object();
 					// for (var j in data.profile[i].default) {
 					// 	defValue[i][j] = data.profile[i].default[j];
@@ -82,27 +93,22 @@ jQuery(function($) {
 				// }
 
 				//profile change
-				profile.find("option").filter(function() {
-					return $(this).text() ==data.info.actProfile;
+				profile.find("option").filter(function () {
+					return $(this).text() == data.info.actProfile;
 				}).prop("selected", true);
-				
 
-				//get mode
-				mode.find("option").filter(function() {
-					return $(this).val() ==data.info.mode;
-				}).prop("selected", true);
+				profile.change()
+
 
 				//status
-				$('.btn-status[value='+data.info.status+']').hide();	
+				$('.btn-status[value=' + data.info.status + ']').hide();
 				console.log(data.info)
-				console.log(data.info.status)			
+				console.log(data.info.status)
 
 				//languages
 				for (var i in language) {
-					$('[data-lang='+i+']').text(language[i])
+					$('[data-lang=' + i + ']').text(language[i])
 				}
-
-
 
 			}
 		});
@@ -110,25 +116,52 @@ jQuery(function($) {
 	}
 
 	function profileChange() {
-		//volver a pedir el modo para actualizar
-		var value 	= profile.val(),
-			index 	= profile.find('option:selected').data('imp');
-			console.log(value,index)
+		var value = profile.val(),
+			index = profile.find('option:selected').data('imp');
+		console.log(value, index)
+		// send value
 
-		mode.val(value);
-		modeChange();
+		//add set profile first
+		$.ajax({
+			type: 'get',
+			dataType: 'json',
+			url: '/info',
+			// data: 'action=onload',
+			success: function (data) {
+				console.log(data);
+
+				// persistent
+				let actmode=data.info.mode
+				if (actmode=="moodlamp" && data.info.persistent=="off") {
+					actmode="moodlamp-static"
+				}
+				mode.find("option").filter(function () {
+					return $(this).val() == actmode;
+				}).prop("selected", true);
 
 
-		for (var i in defValue[index]) {
-			if (i == 'static') $('#color').spectrum('set', defValue[index][i]);
-			else $('#'+i).val(defValue[index][i])
-		}
+
+				mode.change()
+
+				// get smoot and brightness
+				$('#brightness').val(data.info.brightness)
+				$('#smooth').val(data.info.smooth)
+
+			}
+		})
+
+		//fix 
+		//sets de value for mode
+		// for (var i in defValue[index]) {
+		// 	if (i == 'static') $('#color').spectrum('set', defValue[index][i]);
+		// 	else $('#' + i).val(defValue[index][i])
+		// }
 	}
 
 	function liveUpdate(index) {
 		for (var i in defValue[index]) {
 			if (i == 'static') $('#color').spectrum('set', defValue[index][i]);
-			else $('#'+i).val(defValue[index][i])
+			else $('#' + i).val(defValue[index][i])
 		}
 	}
 
@@ -136,7 +169,7 @@ jQuery(function($) {
 		var value = mode.val();
 
 		$('[class*="tab"]').hide();
-		$('.tab-'+value).fadeIn();
+		$('.tab-' + value).fadeIn();
 	}
 
 	function sendData(data) {
@@ -153,18 +186,18 @@ jQuery(function($) {
 
 	function elementSend() {
 		var element = $(this),
-			value 	= element.hasClass('data-imp') ? element.find('option:selected').data('imp') : element.val(),
-			name 	= element.attr('id');
+			value = element.hasClass('data-imp') ? element.find('option:selected').data('imp') : element.val(),
+			name = element.attr('id');
 
-		sendData(name+'='+value);
+		sendData(name + '=' + value);
 	}
 
 	function btnStatusClick() {
 		var element = $(this),
-			value 	= element.val();
+			value = element.val();
 
 		btnStatus.toggle();
-		sendData('status='+value);
+		sendData('status=' + value);
 	}
 
 	getValues();
@@ -185,10 +218,10 @@ jQuery(function($) {
 			dataType: 'json',
 			url: 'test.txt',
 			data: 'action=liveValue',
-			success: function(data) {
+			success: function (data) {
 
 				if (!data) return;
-				
+
 				if ('profile' in data) {
 					defValue[data.profile.index][data.profile.name] = data.profile.value;
 					liveUpdate(data.profile.index);
@@ -198,7 +231,7 @@ jQuery(function($) {
 				profile.find('option').eq(data.profileActive).prop('selected', true).change();
 
 				//cambiar esto por nueva forma de buscar el modo
-				$('#mode').find('option[value="'+data.action+'"]').prop('selected', true).change();
+				$('#mode').find('option[value="' + data.action + '"]').prop('selected', true).change();
 
 				//status
 				if ('status' in data) {

@@ -27,6 +27,8 @@ def getInfo():
     status['mode']=lpack.getMode().rstrip()
     status['status']=lpack.getStatus().rstrip()
     status['brightness']=lpack.getBrightness().rstrip()
+    status['smooth']=lpack.getSmooth().rstrip()
+    status['persistent']=lpack.getPersistColors().rstrip()
 
     return status
 

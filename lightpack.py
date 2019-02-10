@@ -44,6 +44,18 @@ class lightpack:
 		status = self.__readResult()
 		status = status.split(':')[1]
 		return status
+
+	def getPersistColors(self):
+		self.connection.send(b"getpersistonunlock\n")
+		status = self.__readResult()
+		status = status.split(':')[1]
+		return status
+
+	def getSmooth(self):
+		self.connection.send(b"getsmooth\n")
+		status = self.__readResult()
+		status = status.split(':')[1]
+		return status
 	
 	def getCountLeds(self):
 		self.connection.send(b"getcountleds\n")
