@@ -188,5 +188,6 @@ class lightpack:
 	def disconnect(self):
 		self.unlock()
 		self.connection.close()
+        
 	def coseCon(self):
 		self.connection.close()
