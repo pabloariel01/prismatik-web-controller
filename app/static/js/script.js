@@ -23,6 +23,7 @@ jQuery(function ($) {
 	var profile = $('#profile'),
 		mode = $('#mode'),
 		btnStatus = $('.btn-status');
+		
 
 	var defValue = new Object();
 
@@ -34,18 +35,7 @@ jQuery(function ($) {
 			console.log(color.toRgb())
 		}
 	});
-
-	$('.brightness-slider').noUiSlider({
-		range: [0, 100],
-		start: 20,
-		handles: 1,
-		connect: 'lower',
-		set: function () {
-			var value = Math.round(this.val());
-			sendData('setbrightness:' + value);
-		}
-	});
-
+	
 	$('.dynamic-slider').noUiSlider({
 		range: [0, 255],
 		start: 20,
@@ -56,6 +46,19 @@ jQuery(function ($) {
 			sendData('dynamic=' + value);
 		}
 	});
+
+	$('.brightness-slider').noUiSlider({
+		range: [0, 100],
+		start: 20,
+		handles: 1,
+		connect: 'lower',
+		set: function () {
+			var value = Math.round(this.val());
+			sendData('/setbrightness','data=' + value);
+		}
+	});
+
+
 	$('.smooth-slider').noUiSlider({
 		range: [0, 255],
 		start: 20,
@@ -63,7 +66,7 @@ jQuery(function ($) {
 		connect: 'lower',
 		set: function () {
 			var value = Math.round(this.val());
-			sendData('dynamic=' + value);
+			sendData('/setsmooth','data=' + value);
 		}
 	});
 
@@ -180,43 +183,46 @@ jQuery(function ($) {
 
 		$('[class*="tab"]').hide();
 		$('.tab-' + value).fadeIn();
+
+		sendData("/setmode","data="+value)
 	}
 
-	function sendData(data) {
-		console.log(data);
-		// $.ajax({
-		// 	type: 'post',
-		// 	url: '/',
-		// 	data: data,
-		// 	success: function(data) {
-		// 		console.log('Успешно');
-		// 	}
-		// });
+	function sendData(url,data) {
+		console.log(url,data);
+		$.ajax({
+			type: 'post',
+			dataType:'application/json',
+			url: url,
+			data: data,
+			success: function(rta) {
+				console.log(rta);
+			}
+		});
 	}
 
-	function elementSend() {
-		var element = $(this),
-			value = element.hasClass('data-imp') ? element.find('option:selected').data('imp') : element.val(),
-			name = element.attr('id');
+	// function elementSend() {
+	// 	var element = $(this),
+	// 		value = element.hasClass('data-imp') ? element.find('option:selected').data('imp') : element.val(),
+	// 		name = element.attr('id');
 
-		sendData(name + '=' + value);
-	}
+	// 	sendData(name + '=' + value);
+	// }
 
 	function btnStatusClick() {
 		var element = $(this),
 			value = element.val();
 
 		btnStatus.toggle();
-		sendData('status=' + value);
-		$.ajax({
-			type:'post',
-			url:'/setstatus',
-			dataType:'application/json',
-			data:'status=' + value,
-			success:(data)=>{
-				console.log(data)
-			}
-		})
+		sendData('/setstatus','status=' + value);
+		// $.ajax({
+		// 	type:'post',
+		// 	url:'/setstatus',
+		// 	dataType:'application/json',
+		// 	data:'status=' + value,
+		// 	success:(data)=>{
+		// 		console.log(data)
+		// 	}
+		// })
 	}
 
 	getValues();
@@ -228,7 +234,7 @@ jQuery(function ($) {
 
 	btnStatus.on('click', btnStatusClick);
 
-	$('.send').on('change', elementSend);
+	// $('.send').on('change', elementSend);
 
 
 	function liveValues() {
