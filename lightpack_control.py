@@ -72,7 +72,37 @@ def setstatus(status):
 
 
 @retryConnect
-def getMode():
-    return lpack.getMode().rstrip()
+@trySetMethod
+def setBrightness(bgrt):
+    return lpack.setBrightness(bgrt)
+
+@retryConnect
+@trySetMethod
+def setsmoth(smth):
+    rta = lpack.setSmooth(smth)
+    return rta
 
 # setpersistonunlock on para que quede el mismo, off para cambiar
+@retryConnect
+@trySetMethod
+def setMode(mode):
+    print(mode)
+    if(mode=="ambilight"):  #screen capure
+        rta=lpack.setMode("ambilight")
+    elif(mode=="moodlamp"): #dynamic
+        lpack.setMode("moodlamp")
+        rta=lpack.setPersistonUnlock('off')
+    elif(mode=="soundviz"): #sound captura
+        rta=lpack.setMode("soundviz")
+    else:       #static color
+        lpack.setMode("moodlamp")
+        rta=lpack.setPersistonUnlock('on')
+    return rta
+
+            #    "setmode:ambilight"
+            #      "setmode:moodlamp"
+            #      "setmode:soundviz"
+			# 		<option data-lang="screen-capture"  value="ambilight"></option>
+			# 		<option data-lang="static"  value="moodlamp-static"></option>
+			# 		<option data-lang="dynamic"  value="moodlamp"></option>
+			# 		<option data-lang="color-music"  value="soundviz"></option>
