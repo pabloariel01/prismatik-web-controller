@@ -120,35 +120,45 @@ jQuery(function ($) {
 			index = profile.find('option:selected').data('imp');
 		console.log(value, index)
 		// send value
-
-		//add set profile first
 		$.ajax({
-			type: 'get',
+			type: 'post',
 			dataType: 'json',
-			url: '/info',
-			// data: 'action=onload',
-			success: function (data) {
-				console.log(data);
+			url: '/setProfile',
+			data: { 'profile': value },
+			success: () => {
+				console.log('success')
 
-				// persistent
-				let actmode=data.info.mode
-				if (actmode=="moodlamp" && data.info.persistent=="off") {
-					actmode="moodlamp-static"
-				}
-				mode.find("option").filter(function () {
-					return $(this).val() == actmode;
-				}).prop("selected", true);
+				$.ajax({
+					type: 'get',
+					dataType: 'json',
+					url: '/info',
+					// data: 'action=onload',
+					success: function (data) {
+						console.log(data);
+
+						// persistent
+						let actmode = data.info.mode
+						if (actmode == "moodlamp" && data.info.persistent == "off") {
+							actmode = "moodlamp-static"
+						}
+						mode.find("option").filter(function () {
+							return $(this).val() == actmode;
+						}).prop("selected", true);
 
 
 
-				mode.change()
+						mode.change()
 
-				// get smoot and brightness
-				$('#brightness').val(data.info.brightness)
-				$('#smooth').val(data.info.smooth)
+						// get smoot and brightness
+						$('#brightness').val(data.info.brightness)
+						$('#smooth').val(data.info.smooth)
 
+					}
+				})
 			}
+
 		})
+		//add set profile first
 
 		//fix 
 		//sets de value for mode
@@ -198,6 +208,15 @@ jQuery(function ($) {
 
 		btnStatus.toggle();
 		sendData('status=' + value);
+		$.ajax({
+			type:'post',
+			url:'/setstatus',
+			dataType:'application/json',
+			data:'status=' + value,
+			success:(data)=>{
+				console.log(data)
+			}
+		})
 	}
 
 	getValues();
