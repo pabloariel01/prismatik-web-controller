@@ -1,4 +1,4 @@
-from flask import render_template,jsonify
+from flask import render_template,jsonify,request
 from app import app
 
 import lightpack_control as ctrl
@@ -22,9 +22,12 @@ def info():
         'info': ctrl.getInfo()
     })
 
-@app.route('/getMode',methods=['GET'])
-def getMode():
-    return jsonify({
-        'mode': ctrl.getMode()
-    })
+@app.route('/setProfile',methods=['POST'])
+def setProfile():
+    result= ctrl.setProfile(request.form['profile'])
+    return jsonify(result)
 
+@app.route('/setstatus',methods=['POST'])
+def setStatus():
+    result= ctrl.setstatus(request.form['status'])
+    return result
