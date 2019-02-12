@@ -1,4 +1,4 @@
-Website for controlling Prismatik in Lightpack projects (Work in progress)
+Prismatik web Controller for Lightpack projects (Work in progress)
 ---------
 
 *Python Flask backend that comunicates with  [psieg Prismatiks](https://github.com/psieg/Lightpack/releases) telnet api (Version 5.11.2.19)*
