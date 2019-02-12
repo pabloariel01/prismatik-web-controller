@@ -101,6 +101,18 @@ class lightpack:
 		mode = mode.split(':')[1]
 		return mode
 
+	def getsoundvizliquid(self):
+		self.connection.send(b"getsoundvizliquid\n")
+		mode = self.__readResult()
+		mode = mode.split(':')[1]
+		return mode
+
+	def getsoundvizcolors(self):
+		self.connection.send(b"getsoundvizcolors\n")
+		mode = self.__readResult()
+		mode = mode.split(':')[1]
+		return mode
+
 
 	def getHelp(self):
 		self.connection.send(b"help\n")
@@ -200,3 +212,12 @@ class lightpack:
             cmd='setpersistonunlock:{0}\n'.format(s)
             self.connection.send(str.encode(cmd))
             return self.__readResult()
+	def setsoundvizliquid(self,s):
+            cmd='setsoundvizliquid:{0}\n'.format(s)
+            self.connection.send(str.encode(cmd))
+            return self.__readResult()
+	def setsoundvizcolors(self,s):
+            cmd='setsoundvizcolors:{0}\n'.format(s)
+            self.connection.send(str.encode(cmd))
+            return self.__readResult()
+
