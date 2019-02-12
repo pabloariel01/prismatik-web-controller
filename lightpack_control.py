@@ -94,6 +94,7 @@ def setMode(mode):
         rta=lpack.setPersistonUnlock('off')
     elif(mode=="soundviz"): #sound captura
         rta=lpack.setMode("soundviz")
+        #check liquid sound on or off
     else:       #static color
         lpack.setMode("moodlamp")
         rta=lpack.setPersistonUnlock('on')
@@ -106,3 +107,10 @@ def setMode(mode):
 			# 		<option data-lang="static"  value="moodlamp-static"></option>
 			# 		<option data-lang="dynamic"  value="moodlamp"></option>
 			# 		<option data-lang="color-music"  value="soundviz"></option>
+
+
+@retryConnect
+@trySetMethod
+def setColor(colors):
+    print('colorsd:',colors)
+    return lpack.setColorToAll(colors.split(',')[0],colors.split(',')[1],colors.split(',')[2])

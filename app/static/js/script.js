@@ -31,21 +31,21 @@ jQuery(function ($) {
 		flat: true,
 		showButtons: false,
 		move: function (color) {
-			sendData('static=' + color.toHexString());
+			sendData('/setcolor','data=' + color.toRgb().r+','+color.toRgb().g+','+color.toRgb().b);
 			console.log(color.toRgb())
 		}
 	});
 	
-	$('.dynamic-slider').noUiSlider({
-		range: [0, 255],
-		start: 20,
-		handles: 1,
-		connect: 'lower',
-		set: function () {
-			var value = Math.round(this.val());
-			sendData('dynamic=' + value);
-		}
-	});
+	// $('.dynamic-slider').noUiSlider({
+	// 	range: [0, 255],
+	// 	start: 20,
+	// 	handles: 1,
+	// 	connect: 'lower',
+	// 	set: function () {
+	// 		var value = Math.round(this.val());
+	// 		sendData('dynamic=' + value);
+	// 	}
+	// });
 
 	$('.brightness-slider').noUiSlider({
 		range: [0, 100],

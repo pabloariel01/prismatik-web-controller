@@ -44,5 +44,8 @@ def setsmooth():
 
 @app.route('/setmode',methods=['POST'])
 def setMode():
-    print(request.form['data'])
     return ctrl.setMode(request.form['data'])
+
+@app.route('/setcolor',methods=['POST'])
+def setColor():
+    return ctrl.setColor(request.form['data'])
