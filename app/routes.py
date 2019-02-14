@@ -17,10 +17,15 @@ def index():
 
 @app.route('/info', methods=['GET'])
 def info():
-    return jsonify({
-        'status': 'success',
-        'info': ctrl.getInfo()
-    })
+    return jsonify(        
+        ctrl.getInfo()
+    )
+
+@app.route('/soundinfo',methods=['GET'])
+def getSound():
+    return jsonify(
+        ctrl.getSoundvizInfo()
+        )
 
 @app.route('/setProfile',methods=['POST'])
 def setProfile():
@@ -49,3 +54,8 @@ def setMode():
 @app.route('/setcolor',methods=['POST'])
 def setColor():
     return ctrl.setColor(request.form['data'])
+
+
+# set minmax sounvizcolors
+
+#set soundviz mode

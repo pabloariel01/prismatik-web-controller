@@ -6,21 +6,48 @@ lpack.connect()
 
 # print("turnOn: %s" % lpack.turnOn())
 
-def retryConnect(func):
-    @wraps(func)
-    def new_func(*original_args, **original_kwargs):
-        # check reconnect
-        while True:
-            try:
-                return func(*original_args, **original_kwargs)
-            except Exception as e:
-                print("CONNECTION ERROR, RETRYING...",e)
-                lpack.coseCon()
-                lpack.connect()
-                time.sleep(2)
-                # return func_to_decorate(*original_args, **original_kwargs)
-        
-    return new_func
+def retryConnect(exceptions, tries=4, delay=3, backoff=2,):
+    """
+    Retry calling the decorated function using an exponential backoff.
+
+    Args:
+        exceptions: The exception to check. may be a tuple of
+            exceptions to check.
+        tries: Number of times to try (not retry) before giving up.
+        delay: Initial delay between retries in seconds.
+        backoff: Backoff multiplier (e.g. value of 2 will double the delay
+            each retry).
+    """
+    def deco_retry(func):
+
+        @wraps(func)
+        def new_func(*original_args, **original_kwargs):
+            mtries, mdelay = tries, delay
+            # check reconnect
+            msj="error"
+            while mtries > 1:
+                try:
+                    return func(*original_args, **original_kwargs)
+                except Exception as e:
+                    
+                   
+                    print('{}, Retrying in {} seconds...'.format(e, mdelay))
+                    msj='{}...'.format(e)
+                    lpack.coseCon()
+                    lpack.connect()
+                    
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+                    if(mtries<1):
+                        return '{}...'.format(e, mdelay)
+                    
+            return msj
+            # return func(*original_args, **original_kwargs)
+            
+        return new_func
+
+    return deco_retry
 
 def trySetMethod(func):
     @wraps(func)
@@ -39,7 +66,7 @@ def trySetMethod(func):
         
     return wrapper
 
-@retryConnect
+@retryConnect(Exception, tries=2)
 def getInfo():
     status={}
     status['profiles']=lpack.getProfiles()
@@ -49,18 +76,28 @@ def getInfo():
     status['brightness']=lpack.getBrightness().rstrip()
     status['smooth']=lpack.getSmooth().rstrip()
     status['persistent']=lpack.getPersistColors().rstrip()
+    status['apiStatus']=lpack.getAPIStatus().rstrip()
     # print(status)
 
     return status
 
-# //no anda porque no esta locked
 
-@retryConnect
+@retryConnect(Exception,tries=2)
+def getSoundvizInfo():
+    info={}
+    info['max']=lpack.getsoundvizcolors().split(';')[0].rstrip()
+    info['min']=lpack.getsoundvizcolors().split(';')[1].rstrip()
+    info['liquid']=lpack.getsoundvizliquid().rstrip()
+
+    return info
+
+
+@retryConnect(Exception, tries=6)
 @trySetMethod
 def setProfile(profile):
     return lpack.setProfile(profile)
 
-@retryConnect
+@retryConnect(Exception, tries=6)
 @trySetMethod
 def setstatus(status):
     if(status=='on'):
@@ -71,19 +108,19 @@ def setstatus(status):
         return lpack.turnOff()
 
 
-@retryConnect
+@retryConnect(Exception, tries=6)
 @trySetMethod
 def setBrightness(bgrt):
     return lpack.setBrightness(bgrt)
 
-@retryConnect
+@retryConnect(Exception, tries=6)
 @trySetMethod
 def setsmoth(smth):
     rta = lpack.setSmooth(smth)
     return rta
 
 # setpersistonunlock on para que quede el mismo, off para cambiar
-@retryConnect
+@retryConnect(Exception, tries=3)
 @trySetMethod
 def setMode(mode):
     print(mode)
@@ -100,17 +137,11 @@ def setMode(mode):
         rta=lpack.setPersistonUnlock('on')
     return rta
 
-            #    "setmode:ambilight"
-            #      "setmode:moodlamp"
-            #      "setmode:soundviz"
-			# 		<option data-lang="screen-capture"  value="ambilight"></option>
-			# 		<option data-lang="static"  value="moodlamp-static"></option>
-			# 		<option data-lang="dynamic"  value="moodlamp"></option>
-			# 		<option data-lang="color-music"  value="soundviz"></option>
 
 
-@retryConnect
+@retryConnect(Exception, tries=3)
 @trySetMethod
 def setColor(colors):
     print('colorsd:',colors)
     return lpack.setColorToAll(colors.split(',')[0],colors.split(',')[1],colors.split(',')[2])
+

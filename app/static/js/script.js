@@ -1,5 +1,5 @@
 $(window).load(function () {
-	$('#loading').fadeOut(500);
+	// $('#loading').fadeOut(500);
 });
 
 const language = {
@@ -15,7 +15,8 @@ const language = {
 	"backlight-color": "Background color",
 	"rate-change-color": "Speed of color change",
 	"brightness": "Brillo",
-	"smooth": "smooth"
+	"rate-color-change-mode": "Modo",
+
 }
 
 jQuery(function ($) {
@@ -23,29 +24,29 @@ jQuery(function ($) {
 	var profile = $('#profile'),
 		mode = $('#mode'),
 		btnStatus = $('.btn-status');
-		
+
 
 	var defValue = new Object();
 
+	//soundviz colors
+	$("#color-from").spectrum({
+		color: "#f00"
+	});
+
+	$("#color-to").spectrum({
+		color: "#f00"
+	});
+
+	//static color
 	$('#color').spectrum({
 		flat: true,
 		showButtons: false,
 		move: function (color) {
-			sendData('/setcolor','data=' + color.toRgb().r+','+color.toRgb().g+','+color.toRgb().b);
+			sendData('/setcolor', 'data=' + color.toRgb().r + ',' + color.toRgb().g + ',' + color.toRgb().b);
 			console.log(color.toRgb())
 		}
 	});
-	
-	// $('.dynamic-slider').noUiSlider({
-	// 	range: [0, 255],
-	// 	start: 20,
-	// 	handles: 1,
-	// 	connect: 'lower',
-	// 	set: function () {
-	// 		var value = Math.round(this.val());
-	// 		sendData('dynamic=' + value);
-	// 	}
-	// });
+
 
 	$('.brightness-slider').noUiSlider({
 		range: [0, 100],
@@ -54,7 +55,7 @@ jQuery(function ($) {
 		connect: 'lower',
 		set: function () {
 			var value = Math.round(this.val());
-			sendData('/setbrightness','data=' + value);
+			sendData('/setbrightness', 'data=' + value);
 		}
 	});
 
@@ -66,51 +67,63 @@ jQuery(function ($) {
 		connect: 'lower',
 		set: function () {
 			var value = Math.round(this.val());
-			sendData('/setsmooth','data=' + value);
+			sendData('/setsmooth', 'data=' + value);
 		}
 	});
 
 	function getValues() {
+		$('#loading').show();
+
 		$.ajax({
 			type: 'get',
 			dataType: 'json',
 			url: '/info',
 			// data: 'action=onload',
 			success: function (data) {
-				console.log(data);
 
-				//profile
-				const profs = data.info.profiles
-				for (var i in profs) {
-					profile.append('<option data-imp="' + i + '" value="' + profs[i] + '">' + profs[i] + '</option>');
+				if (data.hasOwnProperty("status")) {
+					$('#loading').fadeOut(500);
 
-					// defValue[i] = new Object();
-					// for (var j in data.profile[i].default) {
-					// 	defValue[i][j] = data.profile[i].default[j];
+
+					console.log(data);
+
+					//profile
+					const profs = data.profiles
+					for (var i in profs) {
+						profile.append('<option data-imp="' + i + '" value="' + profs[i] + '">' + profs[i] + '</option>');
+
+						// defValue[i] = new Object();
+						// for (var j in data.profile[i].default) {
+						// 	defValue[i][j] = data.profile[i].default[j];
+						// }
+					}
+
+					//plugin list
+					// for (var i in data.pluginList) {
+					// 	$('#plugin').append('<option value="'+i+'">'+data.pluginList[i]+'</option>');
 					// }
-				}
 
-				//plugin list
-				// for (var i in data.pluginList) {
-				// 	$('#plugin').append('<option value="'+i+'">'+data.pluginList[i]+'</option>');
-				// }
+					//profile change
+					profile.find("option").filter(function () {
+						return $(this).text() == data.actProfile;
+					}).prop("selected", true);
 
-				//profile change
-				profile.find("option").filter(function () {
-					return $(this).text() == data.info.actProfile;
-				}).prop("selected", true);
-
-				profile.change()
+					profile.change()
 
 
-				//status
-				$('.btn-status[value=' + data.info.status + ']').hide();
-				console.log(data.info)
-				console.log(data.info.status)
+					//status
+					$('.btn-status[value=' + data.status + ']').hide();
+					console.log(data)
+					console.log(data.status)
 
-				//languages
-				for (var i in language) {
-					$('[data-lang=' + i + ']').text(language[i])
+					//languages
+					for (var i in language) {
+						$('[data-lang=' + i + ']').text(language[i])
+					}
+				} else {
+					alert("error de conexion \n " + data + "\n Reintentando ")
+					setTimeout(getValues(), 5000)
+
 				}
 
 			}
@@ -140,10 +153,14 @@ jQuery(function ($) {
 						console.log(data);
 
 						// persistent
-						let actmode = data.info.mode
-						if (actmode == "moodlamp" && data.info.persistent == "off") {
+						let actmode = data.mode
+
+						console.log(actmode)
+
+						if (actmode == "moodlamp" && data.persistent == "off") {
 							actmode = "moodlamp-static"
 						}
+
 						mode.find("option").filter(function () {
 							return $(this).val() == actmode;
 						}).prop("selected", true);
@@ -153,12 +170,12 @@ jQuery(function ($) {
 						mode.change()
 
 						// get smoot and brightness
-						$('#brightness').val(data.info.brightness)
-						$('#smooth').val(data.info.smooth)
+						$('#brightness').val(data.brightness)
+						$('#smooth').val(data.smooth)
 
 					}
 				})
-			}
+			}, error: (x, y, z) => { console.log("error", x, y, z) }
 
 		})
 		//add set profile first
@@ -183,18 +200,46 @@ jQuery(function ($) {
 
 		$('[class*="tab"]').hide();
 		$('.tab-' + value).fadeIn();
+		// rgb(255, 128, 0)
+		console.log(value == "soundviz")
+		if (value == "soundviz") {
 
-		sendData("/setmode","data="+value)
+			$.ajax({
+				type: 'get',
+				dataType: 'json',
+				url: '/soundinfo',
+				success: function (data) {
+
+					$("#color-from").spectrum("set", "rgb(" + data.min + ")")
+					$("#color-to").spectrum("set", "rgb(" + data.max + ")")
+
+
+					// chec for sound being marked correctly
+					console.log(data.liquid==0)
+					if(data.luquid == 0){
+						$("#sound-range").checked = true
+					}else{
+						$("#sound-auto").checked = true
+					}
+
+
+				},
+				error: (z, x, c) => { console.log(z, x, c) }
+			})
+
+		}
+
+		sendData("/setmode", "data=" + value)
 	}
 
-	function sendData(url,data) {
-		console.log(url,data);
+	function sendData(url, data) {
+		console.log(url, data);
 		$.ajax({
 			type: 'post',
-			dataType:'application/json',
+			dataType: 'application/json',
 			url: url,
 			data: data,
-			success: function(rta) {
+			success: function (rta) {
 				console.log(rta);
 			}
 		});
@@ -213,7 +258,7 @@ jQuery(function ($) {
 			value = element.val();
 
 		btnStatus.toggle();
-		sendData('/setstatus','status=' + value);
+		sendData('/setstatus', 'status=' + value);
 		// $.ajax({
 		// 	type:'post',
 		// 	url:'/setstatus',
@@ -226,6 +271,7 @@ jQuery(function ($) {
 	}
 
 	getValues();
+
 
 
 	profile.on('change', profileChange);
