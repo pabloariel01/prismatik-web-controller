@@ -33,8 +33,7 @@ def retryConnect(exceptions, tries=4, delay=3, backoff=2,):
                    
                     print('{}, Retrying in {} seconds...'.format(e, mdelay))
                     msj='{}...'.format(e)
-                    lpack.coseCon()
-                    lpack.connect()
+                    resetConnection()
                     
                     time.sleep(mdelay)
                     mtries -= 1
@@ -52,11 +51,20 @@ def retryConnect(exceptions, tries=4, delay=3, backoff=2,):
 def trySetMethod(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-  
-        print("Lock: %s" % lpack.lock())
+            
+        lock = lpack.lock()
+        print("Lock: %s" % lock)
+
         result=func(*args,**kwargs)
 
-        print("unLock: %s" % lpack.unlock())
+        unlock = lpack.unlock()
+        print("unLock: %s" % unlock)
+
+        if(lock.encode("utf-8") != b'lock:success\r\n' or unlock.encode("utf-8") != b'unlock:success\r\n'):
+            print("error locking or unlocking")
+            raise Exception
+        else:
+            print('lock-unlock ok')
 
         # print('arguments',*args, **kwargs)
 
@@ -65,6 +73,10 @@ def trySetMethod(func):
         # return status
         
     return wrapper
+
+def resetConnection():
+    lpack.coseCon()
+    lpack.connect()
 
 @retryConnect(Exception, tries=2)
 def getInfo():
@@ -108,12 +120,12 @@ def setstatus(status):
         return lpack.turnOff()
 
 
-@retryConnect(Exception, tries=6)
+@retryConnect(Exception, tries=2)
 @trySetMethod
 def setBrightness(bgrt):
     return lpack.setBrightness(bgrt)
 
-@retryConnect(Exception, tries=6)
+@retryConnect(Exception, tries=2)
 @trySetMethod
 def setsmoth(smth):
     rta = lpack.setSmooth(smth)
@@ -145,3 +157,13 @@ def setColor(colors):
     print('colorsd:',colors)
     return lpack.setColorToAll(colors.split(',')[0],colors.split(',')[1],colors.split(',')[2])
 
+
+@retryConnect(Exception, tries=2)
+@trySetMethod
+def setsoundvizliquid(mode):
+    return lpack.setsoundvizliquid(mode)
+
+@retryConnect(Exception, tries=2)
+@trySetMethod
+def setsoundvizcolors(colors):
+    return lpack.setsoundvizcolors(colors)

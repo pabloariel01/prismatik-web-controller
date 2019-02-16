@@ -56,6 +56,10 @@ def setColor():
     return ctrl.setColor(request.form['data'])
 
 
-# set minmax sounvizcolors
+@app.route('/setsoundvizliquid',methods=['POST'])
+def setSoundvizLiquid():
+    return ctrl.setsoundvizliquid(request.form['data'])
 
-#set soundviz mode
+@app.route('/setsoundvizcolors',methods=['POST'])
+def setSoundvizColors():
+    return ctrl.setsoundvizcolors(request.form['data'])

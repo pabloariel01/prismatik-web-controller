@@ -23,10 +23,13 @@ jQuery(function ($) {
 
 	var profile = $('#profile'),
 		mode = $('#mode'),
-		btnStatus = $('.btn-status');
+		btnStatus = $('.btn-status'),
+		btnSoundRange = $("#sound-range"),
+		btnSoundAuto = $("#sound-auto");
+	soundVizpicker = $(".soundViz")
+	soundColLimits = $(".soundColLimits")
 
-
-	var defValue = new Object();
+	var info = {}
 
 	//soundviz colors
 	$("#color-from").spectrum({
@@ -44,6 +47,21 @@ jQuery(function ($) {
 		move: function (color) {
 			sendData('/setcolor', 'data=' + color.toRgb().r + ',' + color.toRgb().g + ',' + color.toRgb().b);
 			console.log(color.toRgb())
+		}
+	});
+
+	//move color soundViz
+	soundColLimits.spectrum({
+		// flat: true,
+		// showButtons: false,
+		move: function (color) {
+			// sendData('/setcolor', 'data=' + color.toRgb().r + ',' + color.toRgb().g + ',' + color.toRgb().b);
+			console.log(color.toRgb())
+			const t2 = $("#color-from").spectrum("get").toRgb();
+			const t1 = $("#color-to").spectrum("get").toRgb();
+			const colors = t1.r + ',' + t1.g + ',' + t1.b + ';' + t2.r + ',' + t2.g + ',' + t2.b
+			sendData('/setsoundvizcolors', 'data=' + colors)
+
 		}
 	});
 
@@ -72,7 +90,7 @@ jQuery(function ($) {
 	});
 
 	function getValues() {
-		$('#loading').show();
+		// $('#loading').show();
 
 		$.ajax({
 			type: 'get',
@@ -80,52 +98,56 @@ jQuery(function ($) {
 			url: '/info',
 			// data: 'action=onload',
 			success: function (data) {
+				if (data != info) {
+					console.log('idems',data=!info)
+					info = data
 
-				if (data.hasOwnProperty("status")) {
-					$('#loading').fadeOut(500);
+
+					if (data.hasOwnProperty("status")) {
+						$('#loading').fadeOut(500);
 
 
-					console.log(data);
+						console.log(data);
 
-					//profile
-					const profs = data.profiles
-					for (var i in profs) {
-						profile.append('<option data-imp="' + i + '" value="' + profs[i] + '">' + profs[i] + '</option>');
+						//profile
+						const profs = data.profiles
+						for (var i in profs) {
+							profile.append('<option data-imp="' + i + '" value="' + profs[i] + '">' + profs[i] + '</option>');
 
-						// defValue[i] = new Object();
-						// for (var j in data.profile[i].default) {
-						// 	defValue[i][j] = data.profile[i].default[j];
+							// defValue[i] = new Object();
+							// for (var j in data.profile[i].default) {
+							// 	defValue[i][j] = data.profile[i].default[j];
+							// }
+						}
+
+						//plugin list
+						// for (var i in data.pluginList) {
+						// 	$('#plugin').append('<option value="'+i+'">'+data.pluginList[i]+'</option>');
 						// }
+
+						//profile change
+						profile.find("option").filter(function () {
+							return $(this).text() == data.actProfile;
+						}).prop("selected", true);
+
+						profile.change()
+
+
+						//status
+						$('.btn-status[value=' + data.status + ']').hide();
+						console.log(data)
+						console.log(data.status)
+
+						//languages
+						for (var i in language) {
+							$('[data-lang=' + i + ']').text(language[i])
+						}
+					} else {
+						alert("error de conexion \n " + data + "\n Reintentando ")
+						setTimeout(getValues(), 5000)
+
 					}
-
-					//plugin list
-					// for (var i in data.pluginList) {
-					// 	$('#plugin').append('<option value="'+i+'">'+data.pluginList[i]+'</option>');
-					// }
-
-					//profile change
-					profile.find("option").filter(function () {
-						return $(this).text() == data.actProfile;
-					}).prop("selected", true);
-
-					profile.change()
-
-
-					//status
-					$('.btn-status[value=' + data.status + ']').hide();
-					console.log(data)
-					console.log(data.status)
-
-					//languages
-					for (var i in language) {
-						$('[data-lang=' + i + ']').text(language[i])
-					}
-				} else {
-					alert("error de conexion \n " + data + "\n Reintentando ")
-					setTimeout(getValues(), 5000)
-
 				}
-
 			}
 		});
 
@@ -157,8 +179,11 @@ jQuery(function ($) {
 
 						console.log(actmode)
 
-						if (actmode == "moodlamp" && data.persistent == "off") {
+						if (actmode == "moodlamp" && data.persistent == "on") {
 							actmode = "moodlamp-static"
+							sendData('/setcolor', 'data=57,227,39')
+							$('#color').spectrum("set", 'rgb(57,227,39)');
+
 						}
 
 						mode.find("option").filter(function () {
@@ -188,20 +213,18 @@ jQuery(function ($) {
 		// }
 	}
 
-	function liveUpdate(index) {
-		for (var i in defValue[index]) {
-			if (i == 'static') $('#color').spectrum('set', defValue[index][i]);
-			else $('#' + i).val(defValue[index][i])
-		}
-	}
 
 	function modeChange() {
 		var value = mode.val();
 
 		$('[class*="tab"]').hide();
 		$('.tab-' + value).fadeIn();
+
+		if (value == "moodlamp-static") {
+			sendData('/setcolor', 'data=57,227,39')
+		}
 		// rgb(255, 128, 0)
-		console.log(value == "soundviz")
+		console.log(value)
 		if (value == "soundviz") {
 
 			$.ajax({
@@ -214,15 +237,14 @@ jQuery(function ($) {
 					$("#color-to").spectrum("set", "rgb(" + data.max + ")")
 
 
-					// chec for sound being marked correctly
-					console.log(data.liquid==0)
-					if(data.luquid == 0){
-						$("#sound-range").checked = true
-					}else{
-						$("#sound-auto").checked = true
+					if (data.liquid == 0) {
+						btnSoundRange.prop('checked', true)
+					} else {
+						btnSoundAuto.prop('checked', true)
 					}
 
 
+					soundVizpicker.change()
 				},
 				error: (z, x, c) => { console.log(z, x, c) }
 			})
@@ -259,15 +281,6 @@ jQuery(function ($) {
 
 		btnStatus.toggle();
 		sendData('/setstatus', 'status=' + value);
-		// $.ajax({
-		// 	type:'post',
-		// 	url:'/setstatus',
-		// 	dataType:'application/json',
-		// 	data:'status=' + value,
-		// 	success:(data)=>{
-		// 		console.log(data)
-		// 	}
-		// })
 	}
 
 	getValues();
@@ -280,45 +293,20 @@ jQuery(function ($) {
 
 	btnStatus.on('click', btnStatusClick);
 
-	// $('.send').on('change', elementSend);
+	soundVizpicker.on('change', soundVizModeChange)
 
 
-	function liveValues() {
-		$.ajax({
-			type: 'post',
-			dataType: 'json',
-			url: 'test.txt',
-			data: 'action=liveValue',
-			success: function (data) {
-
-				if (!data) return;
-
-				if ('profile' in data) {
-					defValue[data.profile.index][data.profile.name] = data.profile.value;
-					liveUpdate(data.profile.index);
-				}
-
-				//profile change
-				profile.find('option').eq(data.profileActive).prop('selected', true).change();
-
-				//cambiar esto por nueva forma de buscar el modo
-				$('#mode').find('option[value="' + data.action + '"]').prop('selected', true).change();
-
-				//status
-				if ('status' in data) {
-					if (data.status == 'on') {
-						$('.btn-status[value=on]').hide();
-						$('.btn-status[value=off]').show();
-					} else {
-						$('.btn-status[value=on]').show();
-						$('.btn-status[value=off]').hide();
-					}
-				}
-			}
-		});
-
+	function soundVizModeChange() {
+		const val = this.value
+		if (this.checked) {
+			val == 1 ? soundColLimits.spectrum("disable") : soundColLimits.spectrum("enable");
+			sendData('/setsoundvizliquid', 'data=' + val)
+		}
 	}
 
-	// setInterval(liveValues, 5000);
+
+
+
+	setInterval(getValues, 5000);
 
 })
