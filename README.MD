@@ -25,8 +25,7 @@ Install Flask
 Run proyect (flask run)
 
 ####TODO
-
-*still nedst to be compiled*
+* needs to be compiled*
 *connection settings still harcoded*
 
 ####DONE
@@ -34,3 +33,4 @@ Run proyect (flask run)
 *statick color picker working*
 *brightness working*
 *sound vuzualization modes*
+*live reload geting aplication setings*

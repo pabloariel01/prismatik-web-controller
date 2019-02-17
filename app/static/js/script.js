@@ -1,5 +1,5 @@
 $(window).load(function () {
-	// $('#loading').fadeOut(500);
+	$('#loading').fadeOut(500);
 });
 
 const language = {
@@ -46,7 +46,6 @@ jQuery(function ($) {
 		showButtons: false,
 		move: function (color) {
 			sendData('/setcolor', 'data=' + color.toRgb().r + ',' + color.toRgb().g + ',' + color.toRgb().b);
-			console.log(color.toRgb())
 		}
 	});
 
@@ -56,7 +55,6 @@ jQuery(function ($) {
 		// showButtons: false,
 		move: function (color) {
 			// sendData('/setcolor', 'data=' + color.toRgb().r + ',' + color.toRgb().g + ',' + color.toRgb().b);
-			console.log(color.toRgb())
 			const t2 = $("#color-from").spectrum("get").toRgb();
 			const t1 = $("#color-to").spectrum("get").toRgb();
 			const colors = t1.r + ',' + t1.g + ',' + t1.b + ';' + t2.r + ',' + t2.g + ',' + t2.b
@@ -98,26 +96,24 @@ jQuery(function ($) {
 			url: '/info',
 			// data: 'action=onload',
 			success: function (data) {
-				if (data != info) {
-					console.log('idems',data=!info)
+				if (JSON.stringify(data) != JSON.stringify(info)) {
 					info = data
 
 
 					if (data.hasOwnProperty("status")) {
-						$('#loading').fadeOut(500);
+						// $('#loading').fadeOut(500);
 
 
-						console.log(data);
+						// console.log(data);
 
 						//profile
-						const profs = data.profiles
-						for (var i in profs) {
-							profile.append('<option data-imp="' + i + '" value="' + profs[i] + '">' + profs[i] + '</option>');
+						if (profile[0].options.length == 0) {
+							const profs = data.profiles
+							for (var i in profs) {
+								profile.append('<option data-imp="' + i + '" value="' + profs[i] + '">' + profs[i] + '</option>');
 
-							// defValue[i] = new Object();
-							// for (var j in data.profile[i].default) {
-							// 	defValue[i][j] = data.profile[i].default[j];
-							// }
+							}
+
 						}
 
 						//plugin list
@@ -135,8 +131,6 @@ jQuery(function ($) {
 
 						//status
 						$('.btn-status[value=' + data.status + ']').hide();
-						console.log(data)
-						console.log(data.status)
 
 						//languages
 						for (var i in language) {
@@ -147,6 +141,8 @@ jQuery(function ($) {
 						setTimeout(getValues(), 5000)
 
 					}
+				}else{
+					profile.change()
 				}
 			}
 		});
@@ -156,15 +152,14 @@ jQuery(function ($) {
 	function profileChange() {
 		var value = profile.val(),
 			index = profile.find('option:selected').data('imp');
-		console.log(value, index)
-		// send value
+		// console.log(value, index)
 		$.ajax({
 			type: 'post',
 			dataType: 'json',
 			url: '/setProfile',
 			data: { 'profile': value },
 			success: () => {
-				console.log('success')
+				// console.log('success')
 
 				$.ajax({
 					type: 'get',
@@ -172,12 +167,11 @@ jQuery(function ($) {
 					url: '/info',
 					// data: 'action=onload',
 					success: function (data) {
-						console.log(data);
+						// console.log(data);
 
 						// persistent
 						let actmode = data.mode
 
-						console.log(actmode)
 
 						if (actmode == "moodlamp" && data.persistent == "on") {
 							actmode = "moodlamp-static"
@@ -203,14 +197,7 @@ jQuery(function ($) {
 			}, error: (x, y, z) => { console.log("error", x, y, z) }
 
 		})
-		//add set profile first
 
-		//fix 
-		//sets de value for mode
-		// for (var i in defValue[index]) {
-		// 	if (i == 'static') $('#color').spectrum('set', defValue[index][i]);
-		// 	else $('#' + i).val(defValue[index][i])
-		// }
 	}
 
 
@@ -224,7 +211,7 @@ jQuery(function ($) {
 			sendData('/setcolor', 'data=57,227,39')
 		}
 		// rgb(255, 128, 0)
-		console.log(value)
+		// console.log(value)
 		if (value == "soundviz") {
 
 			$.ajax({
@@ -232,7 +219,7 @@ jQuery(function ($) {
 				dataType: 'json',
 				url: '/soundinfo',
 				success: function (data) {
-
+					console.log(data)
 					$("#color-from").spectrum("set", "rgb(" + data.min + ")")
 					$("#color-to").spectrum("set", "rgb(" + data.max + ")")
 
@@ -255,14 +242,13 @@ jQuery(function ($) {
 	}
 
 	function sendData(url, data) {
-		console.log(url, data);
 		$.ajax({
 			type: 'post',
 			dataType: 'application/json',
 			url: url,
 			data: data,
 			success: function (rta) {
-				console.log(rta);
+				// console.log(rta);
 			}
 		});
 	}
@@ -307,6 +293,6 @@ jQuery(function ($) {
 
 
 
-	setInterval(getValues, 5000);
+	setInterval(getValues, 8000);
 
 })

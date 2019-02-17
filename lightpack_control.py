@@ -31,9 +31,10 @@ def retryConnect(exceptions, tries=4, delay=3, backoff=2,):
                 except Exception as e:
                     
                    
-                    print('{}, Retrying in {} seconds...'.format(e, mdelay))
+                    print('\n  {}, Retrying in {} seconds...'.format(e, mdelay))
                     msj='{}...'.format(e)
-                    resetConnection()
+                    lpack.coseCon()
+                    lpack.connect()
                     
                     time.sleep(mdelay)
                     mtries -= 1
@@ -51,21 +52,16 @@ def retryConnect(exceptions, tries=4, delay=3, backoff=2,):
 def trySetMethod(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-            
-        lock = lpack.lock()
+        lock=lpack.lock()
         print("Lock: %s" % lock)
-
         result=func(*args,**kwargs)
-
-        unlock = lpack.unlock()
+        unlock=lpack.unlock()
         print("unLock: %s" % unlock)
-
         if(lock.encode("utf-8") != b'lock:success\r\n' or unlock.encode("utf-8") != b'unlock:success\r\n'):
             print("error locking or unlocking")
             raise Exception
         else:
             print('lock-unlock ok')
-
         # print('arguments',*args, **kwargs)
 
         return result
@@ -73,10 +69,6 @@ def trySetMethod(func):
         # return status
         
     return wrapper
-
-def resetConnection():
-    lpack.coseCon()
-    lpack.connect()
 
 @retryConnect(Exception, tries=2)
 def getInfo():
@@ -94,13 +86,14 @@ def getInfo():
     return status
 
 
-@retryConnect(Exception,tries=2)
+@retryConnect(Exception,tries=4,backoff=1,delay=1)
 def getSoundvizInfo():
+    print("\ncolors lpack soundviz",lpack.getsoundvizcolors(),"\n")
     info={}
     info['max']=lpack.getsoundvizcolors().split(';')[0].rstrip()
     info['min']=lpack.getsoundvizcolors().split(';')[1].rstrip()
     info['liquid']=lpack.getsoundvizliquid().rstrip()
-
+    print("info soundviz asd",info)
     return info
 
 
@@ -113,10 +106,8 @@ def setProfile(profile):
 @trySetMethod
 def setstatus(status):
     if(status=='on'):
-        print('set on')
         return lpack.turnOn()
     else:
-        print('set off')
         return lpack.turnOff()
 
 
@@ -135,7 +126,7 @@ def setsmoth(smth):
 @retryConnect(Exception, tries=3)
 @trySetMethod
 def setMode(mode):
-    print(mode)
+    print('mode in semode:',mode)
     if(mode=="ambilight"):  #screen capure
         rta=lpack.setMode("ambilight")
     elif(mode=="moodlamp"): #dynamic
