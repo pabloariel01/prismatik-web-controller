@@ -43,8 +43,9 @@ jQuery(function ($) {
 	//static color
 	$('#color').spectrum({
 		flat: true,
-		showButtons: false,
-		move: function (color) {
+		color:"rgb(57,227,39)",
+		// showButtons: false,
+		change: function (color) {
 			sendData('/setcolor', 'data=' + color.toRgb().r + ',' + color.toRgb().g + ',' + color.toRgb().b);
 		}
 	});
@@ -53,7 +54,7 @@ jQuery(function ($) {
 	soundColLimits.spectrum({
 		// flat: true,
 		// showButtons: false,
-		move: function (color) {
+		change: function (color) {
 			// sendData('/setcolor', 'data=' + color.toRgb().r + ',' + color.toRgb().g + ',' + color.toRgb().b);
 			const t2 = $("#color-from").spectrum("get").toRgb();
 			const t1 = $("#color-to").spectrum("get").toRgb();
@@ -99,7 +100,7 @@ jQuery(function ($) {
 				if (JSON.stringify(data) != JSON.stringify(info)) {
 					info = data
 
-
+					console.log(info)
 					if (data.hasOwnProperty("status")) {
 						// $('#loading').fadeOut(500);
 
@@ -175,8 +176,9 @@ jQuery(function ($) {
 
 						if (actmode == "moodlamp" && data.persistent == "on") {
 							actmode = "moodlamp-static"
-							sendData('/setcolor', 'data=57,227,39')
-							$('#color').spectrum("set", 'rgb(57,227,39)');
+							//cambiar solo si se modifico
+							// sendData('/setcolor', 'data=57,227,39')
+							// $('#color').spectrum("set", 'rgb(57,227,39)');
 
 						}
 
@@ -219,7 +221,7 @@ jQuery(function ($) {
 				dataType: 'json',
 				url: '/soundinfo',
 				success: function (data) {
-					console.log(data)
+					// console.log(data)
 					$("#color-from").spectrum("set", "rgb(" + data.min + ")")
 					$("#color-to").spectrum("set", "rgb(" + data.max + ")")
 
@@ -293,6 +295,6 @@ jQuery(function ($) {
 
 
 
-	setInterval(getValues, 8000);
+	// setInterval(getValues, 8000);
 
 })
