@@ -3,3 +3,6 @@
 
 /app/__pycache__
 /venv
+/build
+buildCommand.txt
+leds.spec

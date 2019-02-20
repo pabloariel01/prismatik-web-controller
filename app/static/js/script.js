@@ -100,7 +100,7 @@ jQuery(function ($) {
 				if (JSON.stringify(data) != JSON.stringify(info)) {
 					info = data
 
-					console.log(info)
+					// console.log(info)
 					if (data.hasOwnProperty("status")) {
 						// $('#loading').fadeOut(500);
 
