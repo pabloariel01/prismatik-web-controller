@@ -40,7 +40,9 @@ def retryConnect(exceptions, tries=4, delay=3, backoff=2,):
                     mtries -= 1
                     mdelay *= backoff
                     if(mtries<1):
-                        return '{}...'.format(e, mdelay)
+                        lpack.coseCon()
+                        lpack.connect()
+                        return 'error: {}...'.format(e, mdelay)
                     
             return msj
             # return func(*original_args, **original_kwargs)
