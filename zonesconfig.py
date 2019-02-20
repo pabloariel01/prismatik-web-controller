@@ -1,8 +1,8 @@
 # 
 # Configuration of zones placement for ultrawide
 # @2560x1080
-
-import lightpack, time
+import lightpack
+import time
 import ctypes
 user32 = ctypes.windll.user32
 lpack = lightpack.lightpack('127.0.0.1', 3636, list(range(50)),'{c2ef0ccd-dd8a-4e25-8ab3-8d17ce25b20c}' )

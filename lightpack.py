@@ -176,6 +176,10 @@ class lightpack:
 	def setProfile(self, p):
             cmd = 'setprofile:%s\n' % p;self.connection.send(str.encode(cmd));asd=repr(self.__readResult());print('asd',p,cmd,'result',asd); return asd
 
+	def setLeds(self, g):
+		cmd = 'setleds:{0}\n'.format(g)
+		self.connection.send(str.encode(cmd))
+		return self.__readResult()
 	# def setProfile(self, p):
 	# 	cmd = 'setprofile:{0}\n'.format(p)
 	# 	self.connection.send(str.encode(cmd))
