@@ -19,18 +19,17 @@ handle other devices with Prismatik such as Adalight, Ardulight, or even Alienwa
 
 
 #### Build instructions(still in progress):
-Clone proyect
-Create a virtual environment(optional)
-Install Flask  
-Run proyect (flask run)
+* Clone proyect
+* Create a virtual environment(optional)
+* Install Flask  
+* Run proyect (flask run)
 
 ####TODO
-* needs to be compiled*
-*connection settings still harcoded*
+* needs to be compiled(windows exe only)
+* connection settings still harcoded
 
 ####DONE
-*modes and profiles working*
-*statick color picker working*
-*brightness working*
-*sound vuzualization modes*
-*live reload geting aplication setings*
+* modes and profiles working
+* statick color picker working
+* brightness working
+* sound vuzualization modes
